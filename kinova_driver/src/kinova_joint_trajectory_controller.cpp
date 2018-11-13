@@ -199,7 +199,7 @@ void JointTrajectoryController::pub_joint_vel(const ros::TimerEvent&)
 {
     // send out each velocity command with corresponding duration delay.
 
-    kinova_msgs::JointVelocity joint_velocity_msg;
+    kinova_msgs::JointVelocity joint_velocity_msg; 
 
     if (traj_command_points_index_ <  kinova_angle_command_.size() && ros::ok())
     {

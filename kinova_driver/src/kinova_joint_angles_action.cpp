@@ -60,7 +60,7 @@ KinovaAnglesActionServer::KinovaAnglesActionServer(KinovaComm &arm_comm, const r
     double tolerance;
     node_handle_.param<double>("stall_interval_seconds", stall_interval_seconds_, 0.5);
     node_handle_.param<double>("stall_threshold", stall_threshold_, 1.0);
-    node_handle_.param<double>("rate_hz", rate_hz_, 10.0);
+    node_handle_.param<double>("rate_hz", rate_hz_, 20.0);
     node_handle_.param<double>("tolerance", tolerance, 2.0);
     nh.param<double>("jointSpeedLimitParameter1",jointSpeedLimitJoints123,20);
     nh.param<double>("jointSpeedLimitParameter2",jointSpeedLimitJoints456,20);
@@ -103,7 +103,7 @@ void KinovaAnglesActionServer::actionCallback(const kinova_msgs::ArmJointAnglesG
 
         // Loop until the action completed, is preempted, or fails in some way.
         // timeout is left to the caller since the timeout may greatly depend on
-        // the context of the movement.
+        // the context of the movement.sdf
         while (true)
         {
             ros::spinOnce();
@@ -114,7 +114,7 @@ void KinovaAnglesActionServer::actionCallback(const kinova_msgs::ArmJointAnglesG
                 ROS_WARN_STREAM(__PRETTY_FUNCTION__ << ": LINE " << __LINE__ << ", setAborted ");
                 return;
             }
-            else if (action_server_.isPreemptRequested() || !ros::ok())
+        else if (action_server_.isPreemptRequested() || !ros::ok())
             {
                 result.angles = current_joint_angles.constructAnglesMsg();
                 arm_comm_.stopAPI();
@@ -124,12 +124,12 @@ void KinovaAnglesActionServer::actionCallback(const kinova_msgs::ArmJointAnglesG
                 return;
             }
 
-            arm_comm_.getJointAngles(current_joint_angles);
-            current_time = ros::Time::now();
-            feedback.angles = current_joint_angles.constructAnglesMsg();
+        arm_comm_.getJointAngles(current_joint_angles);
+        current_time = ros::Time::now();
+        feedback.angles = current_joint_angles.constructAnglesMsg();
 //            action_server_.publishFeedback(feedback);
 
-            if (target.isCloseToOther(current_joint_angles, tolerance_))
+        if (target.isCloseToOther(current_joint_angles, tolerance_))
             {
                 // Check if the action has succeeeded
                 result.angles = current_joint_angles.constructAnglesMsg();
@@ -137,21 +137,21 @@ void KinovaAnglesActionServer::actionCallback(const kinova_msgs::ArmJointAnglesG
                 ROS_WARN_STREAM(__PRETTY_FUNCTION__ << ": LINE " << __LINE__ << ", setSucceeded ");
                 return;
             }
-            else if (!last_nonstall_angles_.isCloseToOther(current_joint_angles, stall_threshold_))
+        else if (!last_nonstall_angles_.isCloseToOther(current_joint_angles, stall_threshold_))
             {
                 // Check if we are outside of a potential stall condition
                 last_nonstall_time_ = current_time;
                 last_nonstall_angles_ = current_joint_angles;
             }
-            else if ((current_time - last_nonstall_time_).toSec() > stall_interval_seconds_)
+        else if ((current_time - last_nonstall_time_).toSec() > stall_interval_seconds_)
             {
                 // Check if the full stall condition has been meet
                 result.angles = current_joint_angles.constructAnglesMsg();
-                if (!arm_comm_.isStopped())
+            if (!arm_comm_.isStopped())
                 {
                 	arm_comm_.stopAPI();
                 	arm_comm_.startAPI();
-		}
+		          }
                 //why preemted, if the robot is stalled, trajectory/action failed!
                 /*
                 action_server_.setPreempted(result);
@@ -160,7 +160,7 @@ void KinovaAnglesActionServer::actionCallback(const kinova_msgs::ArmJointAnglesG
                 action_server_.setAborted(result);
                 ROS_WARN_STREAM(__PRETTY_FUNCTION__ << ": LINE " << __LINE__ << ", Trajectory command failed ");
                 return;
-            }
+        }
 
             ros::Rate(rate_hz_).sleep();
         }

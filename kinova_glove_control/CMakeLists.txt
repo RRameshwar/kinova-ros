@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8.3)
 project(kinova_glove_control)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
-# add_compile_options(-std=c++11)
+add_compile_options(-std=c++11)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -12,6 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   std_msgs
 )
+FIND_LIBRARY($armadillo_LIBRARIES armadillo)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -136,9 +137,13 @@ include_directories(
 
 #add_executable(jaco_finger_control_node src/finger_control_node.cpp)
 
-add_executable(jaco_full_control_node src/full_control_node.cpp)
+add_executable(kinova_velocity_control_node src/velocity_control_node.cpp)
+add_executable(sine_wave_test src/sine_wave_test.cpp)
+add_executable(arm_pos_node src/arm_pos_node.cpp)
 add_executable(calibration_node src/calibration_node.cpp)
+
 add_executable(finger_calibration_node src/finger_calibration_node.cpp)
+# add_executable(calibration_test src/imu_calibration_test.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -151,15 +156,28 @@ add_executable(finger_calibration_node src/finger_calibration_node.cpp)
 # add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(jaco_full_control_node 
-  ${catkin_LIBRARIES}
-)
-target_link_libraries(calibration_node 
+target_link_libraries(kinova_velocity_control_node 
   ${catkin_LIBRARIES}
 )
 target_link_libraries(finger_calibration_node 
   ${catkin_LIBRARIES}
 )
+
+target_link_libraries(sine_wave_test 
+  ${catkin_LIBRARIES}
+)
+
+target_link_libraries(arm_pos_node 
+  ${catkin_LIBRARIES}
+  ${armadillo_LIBRARIES}
+
+)
+target_link_libraries(calibration_node 
+  ${catkin_LIBRARIES}
+)
+#target_link_libraries(calibration_test 
+#  ${catkin_LIBRARIES}
+#)
 
 #############
 ## Install ##

@@ -28,6 +28,7 @@ public:
 
 	std::list<float> forearmX;	
 	std::list<float> forearmY;
+	std::list<float> forearmZ;
 	
 	std::list<float> upperX;
 	std::list<float> upperY;
@@ -39,6 +40,7 @@ public:
 
 	float forearmXOffset;
 	float forearmYOffset;
+	float forearmZOffset;
 
 	float upperXOffset;
 	float upperYOffset;
@@ -51,9 +53,9 @@ public:
 
 	IMUCalibrator(){
 
-        subWrist = n.subscribe("imu1", 1000, &IMUCalibrator::WristPosCallback, this);
-        subForearm = n.subscribe("imu2", 1000, &IMUCalibrator::ForearmPosCallback, this);
-        subUpperarm = n.subscribe("imu3", 1000,  &IMUCalibrator::UpperarmPosCallback, this);
+        subWrist = n.subscribe("imuWrist", 1000, &IMUCalibrator::WristPosCallback, this);
+        subForearm = n.subscribe("imuForearm", 1000, &IMUCalibrator::ForearmPosCallback, this);
+        subUpperarm = n.subscribe("imuUpperarm", 1000,  &IMUCalibrator::UpperarmPosCallback, this);
         
   		calibrated = n.advertise<std_msgs::Float32MultiArray>("imuCalibrator", 1000);
 
@@ -99,10 +101,13 @@ public:
 	void ForearmPosCallback(const geometry_msgs::Vector3& msg){
 		float x = msg.x;
 		float y = msg.y;
+		float z = msg.z;
 
 		if (forearmX.size() == 60){			
 			forearmXOffset = calculateAvg(forearmX);
 			forearmYOffset = calculateAvg(forearmY);
+			forearmZOffset = calculateAvg(forearmZ);
+			
 			std::cout << "FOREARM CALIBRATED!" << std::endl;
 			forearmIsCalibrated = true;
 		}
@@ -110,6 +115,7 @@ public:
 		else{
 			forearmX.push_back(x);
 			forearmY.push_back(y);
+			forearmZ.push_back(z);
 			//std::cout << wristX.size() << std::endl;
 		}
 
@@ -126,6 +132,7 @@ public:
 			upperZOffset = calculateAvg(upperZ);
 			std::cout << "UPPER X OFFSET: " << upperYOffset << std::endl;
 			std::cout << "UPPER ARM CALIBRATED!" << std::endl;
+			
 			upperIsCalibrated = true;
 		}
 
@@ -158,8 +165,10 @@ int main(int argc, char **argv)
     	jc.offsets.data.push_back(jc.upperXOffset);
     	jc.offsets.data.push_back(jc.upperYOffset);
     	jc.offsets.data.push_back(jc.upperZOffset);
+    	
     	jc.offsets.data.push_back(jc.forearmXOffset);
     	jc.offsets.data.push_back(jc.forearmYOffset);
+    	jc.offsets.data.push_back(jc.forearmZOffset);
     	
     	jc.offsets.data.push_back(jc.wristXOffset);
     	jc.offsets.data.push_back(jc.wristYOffset);

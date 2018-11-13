@@ -1,7 +1,7 @@
 #include "ros/ros.h"
 #include "sensor_msgs/JointState.h"
 #include "std_msgs/Int16.h"
-#include "std_msgs/Float32MultiArray.h"
+#include "std_msgs/Int16MultiArray.h"
 #include "geometry_msgs/Vector3.h"
 
 #include <sstream>
@@ -14,7 +14,7 @@ public:
 
 	ros::Publisher calibrated;
 
-	std_msgs::Float32MultiArray allVals;
+	std_msgs::Int16MultiArray allVals;
 
 	std::list<float> thumbAngles;
 	std::list<float> pointerAngles;
@@ -28,7 +28,7 @@ public:
 	FingerCalibrator(){
 		subFingers = n.subscribe("fingersPos", 1000, &FingerCalibrator::FingersPosCallback, this);
         
-  		calibrated = n.advertise<std_msgs::Float32MultiArray>("fingerCalibrator", 1000);
+  		calibrated = n.advertise<std_msgs::Int16MultiArray>("fingerCalibrator", 1000);
 
   		mode = 0;
         fingersOpen = false;
@@ -45,10 +45,10 @@ public:
 	}
 
 
-	void FingersPosCallback(const geometry_msgs::Vector3& msg){
-	  int thumb =  msg.x;
-	  int pointer = msg.y;
-	  int middle = msg.z;
+	void FingersPosCallback(const std_msgs::Int16MultiArray& msg){
+	  int thumb =  msg.data[0];
+	  int pointer = msg.data[1];
+	  int middle = msg.data[2];
 
 	  if (mode == 0){
 		  if(middleAngles.size()<60){
@@ -60,6 +60,8 @@ public:
 		  else{
 		  	allVals.data.push_back(calculateAvg(thumbAngles));		  	
 		  	allVals.data.push_back(calculateAvg(pointerAngles));
+		  	allVals.data.push_back(calculateAvg(middleAngles));
+		  	allVals.data.push_back(calculateAvg(middleAngles));
 		  	allVals.data.push_back(calculateAvg(middleAngles));
 
 		  	thumbAngles.clear();
@@ -81,6 +83,8 @@ public:
 		  else{
 		  	allVals.data.push_back(calculateAvg(thumbAngles));		  	
 		  	allVals.data.push_back(calculateAvg(pointerAngles));
+		  	allVals.data.push_back(calculateAvg(middleAngles));
+		  	allVals.data.push_back(calculateAvg(middleAngles));
 		  	allVals.data.push_back(calculateAvg(middleAngles));
 		  	fingersClosed = true;
 		  }
@@ -106,6 +110,11 @@ int main(int argc, char **argv)
     if (jc.fingersClosed and jc.fingersOpen){
     	jc.calibrated.publish(jc.allVals);
     	std::cout << "CALIBRATED FINGERS" << std::endl;
+    	
+    	for (int j = 0; j < 10; j++){
+    		std::cout << jc.allVals.data[j] << std::endl;
+    	}
+    	std::cout << "PRINTED";
     	ros::shutdown();
     }
 
