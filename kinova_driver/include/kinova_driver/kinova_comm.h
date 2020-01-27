@@ -136,8 +136,9 @@ class KinovaComm
     //! \brief send Pose command to robot
     //! \arg position - Pose command
     //! \arg push - If true clears previous trajectories
-    void setCartesianPosition(const KinovaPose &position, int timeout = 0, bool push = true);
+    void setCartesianPosition(const KinovaPose &position, int timeout = 0, bool push = false);
     void setCartesianVelocities(const CartesianInfo &velocities);
+    void setCartesianVelocitiesWithFingers(const CartesianInfo &velocities, const FingerAngles& fingers);
     float getMaxTranslationVelocity(void);
     void setMaxTranslationVelocity(const float &max_trans_vel);
     float getMaxOrientationVelocity(void);
