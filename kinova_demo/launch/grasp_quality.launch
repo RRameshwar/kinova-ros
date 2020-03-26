@@ -1,0 +1,10 @@
+ <launch>
+ 
+  <node pkg="kinova_demo" type="graspQualityTester.py" name="arm_move_node" output="screen">
+  </node>
+
+  <node pkg="kinova_demo" type="contact_publisher_node.py" name="key_press_detector" output="screen">
+  </node>
+
+
+</launch>

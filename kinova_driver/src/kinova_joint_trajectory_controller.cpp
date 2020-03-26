@@ -24,7 +24,7 @@ JointTrajectoryController::JointTrajectoryController(kinova::KinovaComm &kinova_
     sub_command_ = nh_.subscribe("trajectory_controller/command", 1, &JointTrajectoryController::commandCB, this);
 
     pub_joint_feedback_ = nh_.advertise<control_msgs::FollowJointTrajectoryFeedback>("trajectory_controller/state", 1);
-    pub_joint_velocity_ = pn.advertise<kinova_msgs::JointVelocity>("in/joint_velocity", 2);
+    pub_joint_velocity_ = pn.advertise<kinova_msgs::JointVelocity>("in/joint_velocity", 1);
 
     traj_frame_id_ = "root";   
     joint_names_.resize(number_joint_);

@@ -62,8 +62,8 @@ KinovaAnglesActionServer::KinovaAnglesActionServer(KinovaComm &arm_comm, const r
     node_handle_.param<double>("stall_threshold", stall_threshold_, 1.0);
     node_handle_.param<double>("rate_hz", rate_hz_, 10.0);
     node_handle_.param<double>("tolerance", tolerance, 2.0);
-    nh.param<double>("jointSpeedLimitParameter1",jointSpeedLimitJoints123,20);
-    nh.param<double>("jointSpeedLimitParameter2",jointSpeedLimitJoints456,20);
+    nh.param<double>("jointSpeedLimitParameter1",jointSpeedLimitJoints123,10);
+    nh.param<double>("jointSpeedLimitParameter2",jointSpeedLimitJoints456,10);
     tolerance_ = (float)tolerance;
 
     action_server_.start();
