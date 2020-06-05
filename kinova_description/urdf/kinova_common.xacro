@@ -114,16 +114,26 @@
             <origin xyz="${finger_origin_xyz}" rpy="${finger_origin_rpy}"/>
             <limit lower="0" upper="1.51" effort="2" velocity="1"/>
         </joint>
-		    <transmission name="${prefix}joint_finger_${finger_number}_trans">
-					<type>transmission_interface/SimpleTransmission</type>
-					<joint name="${prefix}joint_finger_${finger_number}">
-					  <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-					</joint>
-					<actuator name="${prefix}joint_finger_${finger_number}_actuator">
-					<hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-					<mechanicalReduction>1</mechanicalReduction>
-					</actuator>
-		    </transmission>
+	 <transmission name="${prefix}joint_finger_${finger_number}_trans">
+		<type>transmission_interface/SimpleTransmission</type>
+		<joint name="${prefix}joint_finger_${finger_number}">
+			<hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+		</joint>
+		<actuator name="${prefix}joint_finger_${finger_number}_actuator">
+			<hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+			<mechanicalReduction>1</mechanicalReduction>
+		</actuator>
+	</transmission>
+	<gazebo reference="TestRef">
+        <provideFeedback>true</provideFeedback>
+      </gazebo>
+      <gazebo>
+        <plugin name="ft_sensor" filename="libgazebo_ros_ft_sensor.so">
+          <updateRate>30.0</updateRate>
+          <topicName>ft_sensor_topic</topicName>
+          <jointName>"${prefix}joint_finger_${finger_number}"</jointName>
+        </plugin>
+      </gazebo>
 
 
 
@@ -137,15 +147,26 @@
             <limit lower="0" upper="2" effort="2" velocity="1"/>
         </joint>
         <transmission name="${prefix}joint_finger_tip_${finger_number}_trans">
-					<type>transmission_interface/SimpleTransmission</type>
-					<joint name="${prefix}joint_finger_tip_${finger_number}">
-					  <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-					</joint>
-					<actuator name="${prefix}joint_finger_tip_${finger_number}_actuator">
-					<hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-					<mechanicalReduction>1</mechanicalReduction>
-					</actuator>
+            <type>transmission_interface/SimpleTransmission</type>
+            <joint name="${prefix}joint_finger_tip_${finger_number}">
+                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            </joint>
+            <actuator name="${prefix}joint_finger_tip_${finger_number}_actuator">
+                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+                <mechanicalReduction>1</mechanicalReduction>
+            </actuator>
         </transmission>
+	<gazebo reference="TestRef2">
+        <provideFeedback>true</provideFeedback>
+      </gazebo>
+      <gazebo>
+        <plugin name="ft_sensor" filename="libgazebo_ros_ft_sensor.so">
+          <updateRate>30.0</updateRate>
+          <topicName>ft_sensor_topic2</topicName>
+          <jointName>"${prefix}joint_finger_tip_${finger_number}"</jointName>
+        </plugin>
+      </gazebo>
+
 
     </xacro:macro>
 
